@@ -1,12 +1,13 @@
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
 from rest_framework.decorators import api_view
+from rest_framework.response import Response
 
 from agenda.models import Agendamento
 from agenda.serializers import AgendamentoSerializer
 
 # Create your views here.
-@api_view(http_method_names=['GET', 'PATCH'])
+@api_view(http_method_names=['GET', 'PATCH', 'DELETE'])
 def agendamento_detail(request, id):
     if request.method == 'GET':
         obj = get_object_or_404(Agendamento, id=id)
@@ -22,8 +23,12 @@ def agendamento_detail(request, id):
             obj.email_cliente = validated_data.get('email_cliente', obj.email_cliente)
             obj.telefone_cliente = validated_data.get('telefone_cliente', obj.telefone_cliente)
             obj.save()
-            return JsonResponse(validated_data, status=200)
+            return Response(status=204)
         return JsonResponse(serializer.errors, status=400)
+    if request.method == 'DELETE':
+        obj = get_object_or_404(Agendamento, id=id)
+        obj.delete()
+        return Response(status=204)
 
 @api_view(http_method_names=['GET', 'POST'])
 def agendamento_list(request):
