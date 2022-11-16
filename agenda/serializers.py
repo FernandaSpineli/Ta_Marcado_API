@@ -3,12 +3,11 @@ from django.utils import timezone
 
 from agenda.models import Agendamento
 
-class AgendamentoSerializer(serializers.Serializer):
-    data_horario = serializers.DateTimeField()
-    nome_cliente = serializers.CharField(max_length=200)
-    email_cliente = serializers.EmailField()
-    telefone_cliente = serializers.CharField(max_length=20)
-    
+class AgendamentoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Agendamento
+        fields = ['id', 'data_horario', 'nome_cliente', 'email_cliente', 'telefone_cliente']
+     
     def validate_data_horario(self, value):
         if value < timezone.now():
             raise serializers.ValidationError('Agendamento não pode ser feito no passado.')
