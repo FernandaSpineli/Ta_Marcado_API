@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 import json
 
 from rest_framework.test import APITestCase
@@ -36,7 +36,17 @@ class TestListagemAgendamentos(APITestCase):
     
 class TestCriacaoAgendamento(APITestCase):
     def test_cria_agendamento(self):
-        ...
+        agendamento_request_data = {
+            'data_horario': '2022-03-15T00:00:00Z',
+            'nome_cliente': 'Alice',
+            'email_cliente': 'alice@gmail.com.br',
+            'telefone_cliente': '(11) 99343-1524'
+        }
+        
+        response = self.client.post('/api/agendamentos/', agendamento_request_data, format='json')
+        agendamento_criado = Agendamento.objects.get()
+        
+        self.assertEqual(agendamento_criado.data_horario, datetime(2022, 12, 15, tzinfo=timezone.utc))
     
     def test_quando_request_e_invalido_retorna_400(self):
         ...
