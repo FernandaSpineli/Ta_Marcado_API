@@ -8,9 +8,9 @@ class AgendamentoSerializer(serializers.ModelSerializer):
         model = Agendamento
         fields = ['id', 'data_horario', 'nome_cliente', 'email_cliente', 'telefone_cliente']
      
-    def validate_data_horario(self, value):
-        if value < timezone.now():
-            raise serializers.ValidationError('Agendamento não pode ser feito no passado.')
+    #def validate_data_horario(self, value):
+    #    if value < timezone.now():
+    #        raise serializers.ValidationError('Agendamento não pode ser feito no passado.')
         
     def validate(self, attrs):
         telefone_cliente = attrs.get('telefone_cliente', '')

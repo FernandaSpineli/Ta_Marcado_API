@@ -17,14 +17,14 @@ class TestListagemAgendamentos(APITestCase):
     
     def test_listagem_de_agedamentos_criados(self):
         Agendamento.objects.create(
-            data_horario=datetime(2022, 12, 23),
+            data_horario=datetime(2022, 12, 24, tzinfo=timezone.utc),
             nome_cliente='Alice',
             email_cliente='alice@gmail.com.br',
             telefone_cliente='(11) 99343-1524'       
         )
         agendamento_serializado = {
             'id': 1,
-            'data_horario': '2022-12-23T00:00:00Z',
+            'data_horario': '2022-12-24T00:00:00Z',
             'nome_cliente': 'Alice',
             'email_cliente': 'alice@gmail.com.br',
             'telefone_cliente': '(11) 99343-1524'
@@ -36,17 +36,21 @@ class TestListagemAgendamentos(APITestCase):
     
 class TestCriacaoAgendamento(APITestCase):
     def test_cria_agendamento(self):
-        agendamento_request_data = {
-            'data_horario': '2022-03-15T00:00:00Z',
-            'nome_cliente': 'Alice',
-            'email_cliente': 'alice@gmail.com.br',
-            'telefone_cliente': '(11) 99343-1524'
+        novo_agendamento = {
+            'data_horario': '2022-12-25T12:30:00Z',
+            'nome_cliente': 'AliceSpineli',
+            'email_cliente': 'alice2@gmail.com.br',
+            'telefone_cliente': '99343-1524'
         }
-        
-        response = self.client.post('/api/agendamentos/', agendamento_request_data, format='json')
-        agendamento_criado = Agendamento.objects.get()
-        
-        self.assertEqual(agendamento_criado.data_horario, datetime(2022, 12, 15, tzinfo=timezone.utc))
+        response = self.client.post('/api/agendamentos/', novo_agendamento, format='json')
+        buscar_agendamento = Agendamento.objects.get()
+        self.assertEqual(buscar_agendamento.data_horario, datetime(2022, 12, 25, 12, 30, 00, tzinfo=timezone.utc))
     
     def test_quando_request_e_invalido_retorna_400(self):
-        ...
+        novo_agendamento = {
+            'data_horario': '2022-12-25T12:30:00Z',
+            'nome_cliente': 'AliceSpineli',
+            'email_cliente': 'alice2@gmail.com.br',
+        }
+        response = self.client.post('/api/agendamentos/', novo_agendamento, format='json')
+        self.assertEqual(response.status_code, 400)
