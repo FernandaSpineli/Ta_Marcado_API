@@ -5,40 +5,43 @@ from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import mixins, generics
 
 from agenda.models import Agendamento
 from agenda.serializers import AgendamentoSerializer
 
-# Create your views here.
-@api_view(http_method_names=['GET', 'PATCH', 'DELETE'])
-def agendamento_detail(request, id):
-    obj = get_object_or_404(Agendamento, id=id)
-    if request.method == 'GET':
-        serializer = AgendamentoSerializer(obj)
-        return JsonResponse(serializer.data)
-    if request.method == 'PATCH':
-        serializer = AgendamentoSerializer(obj, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(status=204)
-        return JsonResponse(serializer.errors, status=400)
-    if request.method == 'DELETE':
-        obj.delete()
-        return Response(status=204)
+class AgendamentoList(
+    mixins.ListModelMixin,
+    mixins.CreateModelMixin,
+    generics.GenericAPIView
+    ):
+    queryset = Agendamento.objects.all()
+    serializer_class = AgendamentoSerializer
+    
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+class AgendamentoDetail(
+    mixins.RetrieveModelMixin,
+    mixins.UpdateModelMixin,
+    mixins.DestroyModelMixin,
+    generics.GenericAPIView
+    ):
+    queryset = Agendamento.objects.all()
+    serializer_class = AgendamentoSerializer
+    
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+    def patch(self, request, *args, **kwargs):
+        return self.partial_update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)        
 
-class AgendamentoList(APIView):
-    def get(self, request):
-        qs = Agendamento.objects.all()
-        serializer = AgendamentoSerializer(qs, many=True)
-        return JsonResponse(serializer.data, safe=False)
-    
-    def post(self, request):
-        serializer = AgendamentoSerializer(data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return JsonResponse(serializer.data, status=201)
-        return JsonResponse(serializer.errors, status=400)
-    
 @api_view()
 def get_horarios(request):
     data = request.query_params.get('data')
