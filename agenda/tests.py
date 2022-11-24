@@ -80,4 +80,4 @@ class TestAgendamentoDetail(APITestCase):
             'telefone_cliente': '99343-1524'
         }
         response = self.client.patch('/api/agendamentos/1/', agendamento_atualizado, format='json')
-        self.assertEqual(response.status_code, 204)
+        self.assertEqual(response.status_code, 200)
