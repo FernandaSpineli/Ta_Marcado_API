@@ -9,23 +9,6 @@ from rest_framework.views import APIView
 from agenda.models import Agendamento
 from agenda.serializers import AgendamentoSerializer
 
-# Create your views here.
-@api_view(http_method_names=['GET', 'PATCH', 'DELETE'])
-def agendamento_detail(request, id):
-    obj = get_object_or_404(Agendamento, id=id)
-    if request.method == 'GET':
-        serializer = AgendamentoSerializer(obj)
-        return JsonResponse(serializer.data)
-    if request.method == 'PATCH':
-        serializer = AgendamentoSerializer(obj, data=request.data, partial=True)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(status=204)
-        return JsonResponse(serializer.errors, status=400)
-    if request.method == 'DELETE':
-        obj.delete()
-        return Response(status=204)
-
 class AgendamentoList(APIView):
     def get(self, request):
         qs = Agendamento.objects.all()
@@ -39,6 +22,23 @@ class AgendamentoList(APIView):
             return JsonResponse(serializer.data, status=201)
         return JsonResponse(serializer.errors, status=400)
     
+class AgendamentoDetail(APIView):
+    def get(self, request):
+        obj = get_object_or_404(Agendamento, id=id)
+        serializer = AgendamentoSerializer(obj)
+        return JsonResponse(serializer.data)
+    def patch(self, request, id):
+        obj = get_object_or_404(Agendamento, id=id)
+        serializer = AgendamentoSerializer(obj, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(status=204)
+    def delete(self, request, id):
+        obj = get_object_or_404(Agendamento, id=id)
+        obj.delete()
+        return Response(status=204)
+    
+
 @api_view()
 def get_horarios(request):
     data = request.query_params.get('data')
