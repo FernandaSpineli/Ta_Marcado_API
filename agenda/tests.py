@@ -9,7 +9,7 @@ from agenda.models import Agendamento
 
 class TestListagemAgendamentos(APITestCase):
     def test_listagem_vazia(self):
-        response = self.client.get('/api/agendamentos/')
+        response = self.client.get('/api/agendamentos/?username=fernanda')
         data = json.loads(response.content)
         self.assertEqual(data, [])
         
@@ -18,6 +18,7 @@ class TestListagemAgendamentos(APITestCase):
     
     def test_listagem_de_agedamentos_criados(self):
         Agendamento.objects.create(
+            prestador = 1,
             data_horario=datetime(2022, 12, 24, tzinfo=timezone.utc),
             nome_cliente='Alice',
             email_cliente='alice@gmail.com.br',
