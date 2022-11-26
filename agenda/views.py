@@ -1,13 +1,30 @@
 from datetime import datetime
 
 from rest_framework.decorators import api_view
-from rest_framework import mixins, generics
+from rest_framework import mixins, generics, permissions
+from django.contrib.auth.models import User
 
 from agenda.models import Agendamento
-from agenda.serializers import AgendamentoSerializer
+from agenda.serializers import AgendamentoSerializer, PrestadorSerializer
+
+class IsOwnerOrCreateOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        if request.method == 'POST':
+            return True
+        username = request.query_params.get('username', None)
+        if request.user.username == username:
+            True
+        return False
+
+class IsPrestador(permissions.BasePermission):
+    def has_object_permission(self, request, view, obj):
+        if obj.prestador == request.user:
+            return True
+        return False
 
 class AgendamentoList(generics.ListCreateAPIView):
     serializer_class = AgendamentoSerializer
+    permission_classes = [IsOwnerOrCreateOnly]
     
     def get_queryset(self):
         username = self.request.query_params.get('username', None)
@@ -16,7 +33,12 @@ class AgendamentoList(generics.ListCreateAPIView):
     
 class AgendamentoDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Agendamento.objects.all()
-    serializer_class = AgendamentoSerializer     
+    serializer_class = AgendamentoSerializer  
+    permission_classes = [IsPrestador]   
+
+class PrestadorList(generics.ListAPIView):
+    serializer_class = PrestadorSerializer
+    queryset = User.objects.all()
 
 @api_view()
 def get_horarios(request):

@@ -25,3 +25,10 @@ class AgendamentoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError('E-mail brasileiro deve estarassociado a um número do Brasil (+55)')
         return attrs
     
+class PrestadorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ['id', 'username', 'agendamentos']
+        
+    agendamentos = AgendamentoSerializer(many=True, read_only=True)
+    
