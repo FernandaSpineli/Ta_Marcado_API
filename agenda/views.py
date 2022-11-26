@@ -7,9 +7,12 @@ from agenda.models import Agendamento
 from agenda.serializers import AgendamentoSerializer
 
 class AgendamentoList(generics.ListCreateAPIView):
-    queryset = Agendamento.objects.all()
     serializer_class = AgendamentoSerializer
-
+    
+    def get_queryset(self):
+        username = self.request.query_params.get('username', None)
+        queryset = Agendamento.objects.filter(pretador__username=username)
+        return queryset
     
 class AgendamentoDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Agendamento.objects.all()
