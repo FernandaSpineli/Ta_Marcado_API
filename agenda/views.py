@@ -9,7 +9,7 @@ from agenda.serializers import AgendamentoSerializer, PrestadorSerializer
 
 class IsOwnerOrCreateOnly(permissions.BasePermission):
     def has_permission(self, request, view):
-        if request.method == 'POST':
+        if request.method == 'POST' or request.method == 'GET':
             return True
         username = request.query_params.get('username', None)
         if request.user.username == username:
@@ -28,8 +28,8 @@ class AgendamentoList(generics.ListCreateAPIView):
     
     def get_queryset(self):
         username = self.request.query_params.get('username', None)
-        queryset = Agendamento.objects.filter(prestador__username=username)
-        return queryset
+        return Agendamento.objects.filter(prestador__username=username)
+
     
 class AgendamentoDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Agendamento.objects.all()
