@@ -1,11 +1,13 @@
 from datetime import datetime
 
+from django.http import JsonResponse
 from rest_framework.decorators import api_view
 from rest_framework import mixins, generics, permissions
 from django.contrib.auth.models import User
 
 from agenda.models import Agendamento
 from agenda.serializers import AgendamentoSerializer, PrestadorSerializer
+from agenda.utils import get_horarios_disponiveis
 
 class IsOwnerOrCreateOnly(permissions.BasePermission):
     def has_permission(self, request, view):
@@ -48,5 +50,5 @@ def get_horarios(request):
     else:
         data = datetime.fromisoformat(data).date()
         
-#    horarios_disponiveis = sorted(list(get_horarios_disponiveis(data)))
-#    return JsonResponse(horarios_disponiveis)
+    horarios_disponiveis = sorted(list(get_horarios_disponiveis(data)))
+    return JsonResponse(horarios_disponiveis, safe=False)
