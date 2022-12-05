@@ -1,5 +1,6 @@
 from datetime import datetime, timezone
 import json
+from unittest import mock
 
 from rest_framework.test import APITestCase
 from django.contrib.auth.models import User
@@ -102,11 +103,15 @@ class TestAgendamentoDetail(APITestCase):
         self.assertEqual(response.status_code, 200)
         
 class TestGetHorarios(APITestCase):
-    def test_quando_data_e_feriado_retorna_lista_vazia(self):
+    @mock.patch('agenda.libs.brasil_api.is_feriado', return_value=True)
+    def test_quando_data_e_feriado_retorna_lista_vazia(self, is_feriado_mock):
         response = self.client.get('/api/horarios/?data=2022-12-25')
-        #self.assertEqual(response.content, [])
+        self.assertEqual(response.data, [])
         self.assertEqual(response.status_code, 200)
         
-    def test_quando_data_e_dia_comum_retorna_lista_com_horarios(self):
+    @mock.patch('agenda.libs.brasil_api.is_feriado', return_value=False)
+    def test_quando_data_e_dia_comum_retorna_lista_com_horarios(self, is_feriado_mock):
         response = self.client.get('/api/horarios/?data=2022-10-25')
-        self.assertEqual(response.status_code, 200)
+        self.assertNotEqual(response.data, [])
+        self.assertEqual(response.data[0], datetime(2022, 10, 25, 9, tzinfo=timezone.utc))
+        self.assertEqual(response.data[-1], datetime(2022, 10, 25, 17, 30, tzinfo=timezone.utc))

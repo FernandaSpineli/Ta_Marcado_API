@@ -1,8 +1,8 @@
 from datetime import datetime
 
-from django.http import JsonResponse
+from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from rest_framework import mixins, generics, permissions
+from rest_framework import generics, permissions
 from django.contrib.auth.models import User
 
 from agenda.models import Agendamento
@@ -42,7 +42,7 @@ class PrestadorList(generics.ListAPIView):
     serializer_class = PrestadorSerializer
     queryset = User.objects.all()
 
-@api_view()
+@api_view(http_method_names=['GET'])
 def get_horarios(request):
     data = request.query_params.get('data')
     if not data:
@@ -51,4 +51,4 @@ def get_horarios(request):
         data = datetime.fromisoformat(data).date()
         
     horarios_disponiveis = sorted(list(get_horarios_disponiveis(data)))
-    return JsonResponse(horarios_disponiveis, safe=False)
+    return Response(horarios_disponiveis)
