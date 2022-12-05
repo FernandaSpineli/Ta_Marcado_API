@@ -1,5 +1,5 @@
 from datetime import date
-import requests    
+import requests, json    
 
 from django.conf import settings
     
@@ -14,7 +14,7 @@ def is_feriado(data: date) -> bool:
     if not request.status_code == 200:
         raise ValueError('Não foi possível consultar os feriados.')
     
-    feriados = request.json()
+    feriados = json.loads(request.text)
     for feriado in feriados:
         data_feriado_string = feriado['date'] 
         data_feriado = date.fromisoformat(data_feriado_string)

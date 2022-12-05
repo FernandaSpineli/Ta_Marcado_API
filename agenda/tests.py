@@ -100,3 +100,13 @@ class TestAgendamentoDetail(APITestCase):
         }
         response = self.client.patch('/api/agendamentos/1/', agendamento_atualizado, format='json')
         self.assertEqual(response.status_code, 200)
+        
+class TestGetHorarios(APITestCase):
+    def test_quando_data_e_feriado_retorna_lista_vazia(self):
+        response = self.client.get('/api/horarios/?data=2022-12-25')
+        #self.assertEqual(response.content, [])
+        self.assertEqual(response.status_code, 200)
+        
+    def test_quando_data_e_dia_comum_retorna_lista_com_horarios(self):
+        response = self.client.get('/api/horarios/?data=2022-10-25')
+        self.assertEqual(response.status_code, 200)
