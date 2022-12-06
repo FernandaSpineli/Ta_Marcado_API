@@ -24,14 +24,14 @@ class TestListagemAgendamentos(APITestCase):
         self.client.login(username='nanda', password='123')
         Agendamento.objects.create(
             prestador = nanda,
-            data_horario=datetime(2022, 12, 24, tzinfo=timezone.utc),
+            data_horario=datetime(2022, 12, 24, 9, 30, tzinfo=timezone.utc),
             nome_cliente='Alice',
             email_cliente='alice@gmail.com.br',
             telefone_cliente='(11) 99343-1524'       
         )
         agendamento_serializado = {
             'id': 1,
-            'data_horario': '2022-12-24T00:00:00Z',
+            'data_horario': '2022-12-24T09:30:00Z',
             'nome_cliente': 'Alice',
             'email_cliente': 'alice@gmail.com.br',
             'telefone_cliente': '(11) 99343-1524',
@@ -46,7 +46,7 @@ class TestAgendamentoDetail(APITestCase):
         nanda = User.objects.create_user(email='nanda@gmail.com', username='nanda', password='123')
         novo_agendamento = {
             'prestador': 'nanda',
-            'data_horario': '2022-12-25T12:30:00Z',
+            'data_horario': '2022-12-12T12:30:00Z',
             'nome_cliente': 'AliceSpineli',
             'email_cliente': 'alice2@gmail.com.br',
             'telefone_cliente': '99343-1524'
@@ -55,7 +55,7 @@ class TestAgendamentoDetail(APITestCase):
         self.assertEqual(response.status_code, 201)
         
         buscar_agendamento = Agendamento.objects.get()
-        self.assertEqual(buscar_agendamento.data_horario, datetime(2022, 12, 25, 12, 30, 00, tzinfo=timezone.utc))
+        self.assertEqual(buscar_agendamento.data_horario, datetime(2022, 12, 12, 12, 30, 00, tzinfo=timezone.utc))
     
     def test_quando_request_e_invalido_retorna_400(self):
         User.objects.create_user(email='nanda@gmail.com', username='nanda', password='123')
@@ -87,13 +87,13 @@ class TestAgendamentoDetail(APITestCase):
         self.client.login(username='nanda', password='123')
         Agendamento.objects.create(
             prestador = nanda,
-            data_horario=datetime(2022, 12, 24, tzinfo=timezone.utc),
-            nome_cliente='Alice',
-            email_cliente='alice@gmail.com.br',
-            telefone_cliente='(11) 99343-1524'       
+            data_horario = datetime(2022, 12, 24, 9, 30, tzinfo=timezone.utc),
+            nome_cliente = 'Alice',
+            email_cliente = 'alice@gmail.com.br',
+            telefone_cliente = '(11) 99343-1524'       
         )
         agendamento_atualizado = {
-            'data_horario': '2022-12-25T12:30:00Z',
+            'data_horario': '2022-12-24T12:30:00Z',
             'nome_cliente': 'AliceSpineli',
             'email_cliente': 'alice2@gmail.com.br',
             'telefone_cliente': '99343-1524',
