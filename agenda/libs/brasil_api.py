@@ -15,8 +15,9 @@ def is_feriado(data: date) -> bool:
     ano = data.year
     request = requests.get(f'https://brasilapi.com.br/api/feriados/v1/{ano}')
     if not request.status_code == 200:
-        raise ValueError('Não foi possível consultar os feriados.')
-    
+        logging.error('Algum erro ocorreu na Brasil API')
+        return False
+        
     feriados = json.loads(request.text)
     for feriado in feriados:
         data_feriado_string = feriado['date'] 

@@ -127,3 +127,26 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 TESTING = len(sys.argv) > 1 and sys.argv[1] == 'test'
+
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {},
+    'handlers': {
+        'console': {
+            'class': 'logging.StreamHandler',
+            'formater': 'console'
+        },
+        'file': {
+            'class': 'logging.FileHandler',
+            'formater': 'file',
+            'filename': 'app.log' # arquivo onde o log será salvo
+        }    
+    }, 
+    'loggers': {
+        '': {
+            'level': 'WARN',
+            'handlers': ['console', 'file']
+        }
+    }
+}
